@@ -10,16 +10,22 @@ use Exception;
 class AccessToken
 {
     public string $token;
-    public int $tokenExpirationTime;
+    public int $expiresIn;
 
-    public function getToken(): string
+    public function __construct($token = '', $expiresIn = 0)
+    {
+        $this->token = $token;
+        $this->expiresIn = $expiresIn;
+    }
+
+    public function getToken()
     {
         return $this->token;
     }
 
-    public function getTokenExpirationTime(): int
+    public function getExpiresIn()
     {
-        return $this->tokenExpirationTime;
+        return $this->expiresIn;
     }
 
     public function setToken($token): void
@@ -27,23 +33,23 @@ class AccessToken
         $this->token = $token;
     }
 
-    public function setTokenExpirationTime($expiresIn): void
+    public function setExpiresIn($expiresIn): void
     {
-        $this->tokenExpirationTime = $expiresIn;
+        $this->expiresIn = $expiresIn;
     }
 
-    public static function fromResponse($response): AccessToken
+    public static function fromResponse($response)
     {
         return static::fromResponseArray(
             Client::responseToArray($response)
         );
     }
 
-    public static function fromResponseArray($responseArray): AccessToken
+    public static function fromResponseArray($responseArray)
     {
         if (!is_array($responseArray)) {
             throw new \InvalidArgumentException(
-                'Argument is not an array'
+                'Argument is not array'
             );
         }
         if (!isset($responseArray['access_token'])) {

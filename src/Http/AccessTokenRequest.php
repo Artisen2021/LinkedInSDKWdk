@@ -43,7 +43,7 @@ class AccessTokenRequest
             $this->accessToken = new AccessToken();
             $this->requestBody = $this->setAccessToken(AccessToken::fromResponse($response));
             $this->accessToken->setToken($this->requestBody->accessToken->token);
-            $this->accessToken->setTokenExpirationTime($this->requestBody->accessToken->tokenExpirationTime);
+            $this->accessToken->setExpiresIn($this->requestBody->accessToken->expiresIn);
         }
         return $this->accessToken;
     }
