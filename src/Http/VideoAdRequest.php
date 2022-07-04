@@ -5,7 +5,7 @@ namespace Artisen2021\LinkedInSDK\Http;
 
 use Artisen2021\LinkedInSDK\Authentication\AccessToken;
 use Artisen2021\LinkedInSDK\Authentication\Client;
-use Artisen2021\LinkedInSDK\Builder\AdRequestBodyBuilder;
+use Artisen2021\LinkedInSDK\Builder\AdBuilder;
 use Artisen2021\LinkedInSDK\Distribution\VideoAd;
 use Artisen2021\LinkedInSDK\Exception\CouldNotCreateAnAd;
 use Artisen2021\LinkedInSDK\Exception\CouldNotCreateAnImageAd;
@@ -19,21 +19,19 @@ use GuzzleHttp\Exception\RequestException;
 
 class VideoAdRequest extends LinkedInRequest
 {
-    use TraitOAuthIsSetUp;
-
     private const BEARER = 'Bearer ';
     public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
     public Client $client;
     public string $token;
     public VideoUploaderRequest $videoUploaderRequest;
-    public AdRequestBodyBuilder $builder;
+    public AdBuilder $builder;
 
     public function __construct(Client $client, string $token)
     {
         $this->client = $client;
         $this->token = $token;
         $this->videoUploaderRequest = new VideoUploaderRequest($this->client,$this->token);
-        $this->builder = new AdRequestBodyBuilder();
+        $this->builder = new AdBuilder();
     }
 
     /**

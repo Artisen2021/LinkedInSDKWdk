@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Artisen2021\LinkedInSDK\Builder;
 
-class AdRequestBodyBuilder
+class AdBuilder
 {
 
     private const OWNER = 'urn:li:organization:';
@@ -17,7 +17,7 @@ class AdRequestBodyBuilder
             'content' => [
                 'contentEntities' => [
                     [
-                        //'landingPageTitle' => strtoupper(str_replace(' ', '_', $params['call_to_action'])),
+                        'landingPageTitle' => strtoupper(str_replace(' ', '_', $params['call_to_action'])),
                         'landingPageUrl' => $params['landing_page_url'],
                         'description' => $params['text'],
                         'title' => $params['title'],
@@ -125,6 +125,17 @@ class AdRequestBodyBuilder
             'reference' => $params['direct_share_reference'],
             'status' => 'ACTIVE',
             'type' => 'SPONSORED_VIDEO',
+        ];
+    }
+
+    public function delete()
+    {
+        return [
+            'patch' => [
+                '$set' => [
+                    'status' => 'PENDING_DELETION',
+                ]
+            ]
         ];
     }
 

@@ -13,8 +13,6 @@ use GuzzleHttp\Exception\RequestException;
 
 class TargetingRequest extends LinkedInRequest
 {
-    use TraitOAuthIsSetUp;
-
     private const BEARER = 'Bearer ';
     //What's this const supposed to do?
     public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';

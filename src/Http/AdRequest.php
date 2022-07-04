@@ -12,20 +12,21 @@ use Artisen2021\LinkedInSDK\Exception\CouldNotCreateAnAd;
 use Artisen2021\LinkedInSDK\Exception\CouldNotDeleteAnAd;
 use Artisen2021\LinkedInSDK\UrlEnums;
 use GuzzleHttp\Exception\RequestException;
+use Artisen2021\LinkedInSDK\Builder\AdBuilder;
 
 class AdRequest extends LinkedInRequest
 {
-    use TraitOAuthIsSetUp;
-
     public Client $client;
     public string $token;
     protected const MEDIA_TYPE_IMAGE = 'image';
     protected const MEDIA_TYPE_VIDEO = 'video';
+    public AdBuilder $builder;
 
     public function __construct(Client $client, string $token)
     {
         $this->client = $client;
         $this->token = $token;
+        $this->builder = new AdBuilder();
     }
 
     public function create(array $parameters)
@@ -45,17 +46,12 @@ class AdRequest extends LinkedInRequest
      */
     public function delete(int $adId): void
     {
-        $parameters = [
-            'patch' => [
-                '$set' => [
-                    'status' => 'PENDING_DELETION',
-                ]
-            ]
-        ];
+        $requestBody = $this->builder->delete();
+
         $uri = $this->client->buildUrl(UrlEnums::URL['AD_CREATIVES']. '/' . $adId,[]);
         $header = ['Authorization' => 'Bearer ' . $this->token];
         try {
-            (new LinkedInRequest())->send('POST', $uri, $header, $parameters);
+            (new LinkedInRequest())->send('POST', $uri, $header, $requestBody);
         } catch (RequestException $e) {
             throw new CouldNotDeleteAnAd($e->getMessage(), $e->getCode(), ['ad_id' => $adId]);
         }
@@ -68,8 +64,6 @@ class AdRequest extends LinkedInRequest
     {
         $this->delete($adId);
 
-//        $parameters['campaign_id'] = $parameters['external_campaign_id'];
-//        $parameters['account_id'] = $parameters['external_account_id'];
         return $this->create($parameters);
     }
 
