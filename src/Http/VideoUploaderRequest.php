@@ -18,10 +18,11 @@ class VideoUploaderRequest extends LinkedInRequest
     public string $token;
     public AdRequestBodyBuilder $builder;
 
-    public function __construct()
+    public function __construct(Client $client, string $token)
     {
-        $this->client = $this->getSetUpClient();
-        $this->token = $this->getSetUpToken();
+        $this->client = $client;
+        $this->token = $token;
+        $this->builder = new AdRequestBodyBuilder();
     }
 
     /**
@@ -48,24 +49,23 @@ class VideoUploaderRequest extends LinkedInRequest
         } catch (RequestException $e) {
             throw new CouldNotUploadVideoAd('LinkedIn : Failed to upload video', $e, $parameters);
         }
-
         return $mediaAsset;
     }
 
     private function requestCredentialsForVideoUpload(string $pageId): array
     {
-        $requestBody = json_encode($this->builder->requestCredentialsForVideoUpload($pageId));
+        $requestBody = $this->builder->requestCredentialsForVideoUpload($pageId);
 
         $header = [
             'Authorization' => self::BEARER . $this->token,
             'Content-type' => 'application/json'
         ];
 
-        $uri = $this->client->buildUrl(UrlEnums::URL['ASSET_REGISTER'], $requestBody);
+        $uri = rtrim($this->client->buildUrl(UrlEnums::URL['ASSET_REGISTER'],[]), '?');
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('POST', $uri, $header, []);
+            $response = $request->send('POST', $uri, $header, $requestBody);
         } catch (RequestException $e) {
             throw new CouldNotUploadVideoAd('LinkedIn : Failed to request credentials for video upload', $e, ['ad_id' => $pageId]);
         }

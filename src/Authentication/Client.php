@@ -7,7 +7,7 @@ use Exception;
 
 class Client
 {
-     private const OAUTH2_API_ROOT = 'https://www.linkedin.com/oauth/v2/';
+    private const OAUTH2_API_ROOT = 'https://api.linkedin.com/v2/';
 
     public string $clientId;
 
@@ -19,7 +19,7 @@ class Client
 
     public const OAUTH2_RESPONSE_TYPE = 'code';
 
-    private const SCOPE = [Scope::READ_LITE_PROFILE, Scope::READ_EMAIL_ADDRESS];
+    private const SCOPE = [Scope::READ_LITE_PROFILE, Scope::SHARE_AS_USER];
 
 
     public function __construct(string $clientId, string $clientSecret)

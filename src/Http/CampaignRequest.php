@@ -21,10 +21,10 @@ class CampaignRequest extends LinkedInRequest
     public Client $client;
     public string $token;
 
-    public function __construct()
+    public function __construct(Client $client, string $token)
     {
-        $this->client = $this->getSetUpClient();
-        $this->token = $this->getSetUpToken();
+        $this->client = $client;
+        $this->token = $token;
     }
 
     /**
@@ -32,13 +32,16 @@ class CampaignRequest extends LinkedInRequest
      */
     public function create(array $parameters)
     {
-        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGN'], $parameters);
+        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGNS'], []);
 
-        $header = ['Authorization' => self::BEARER . $this->token];
+        $header = [
+            'Authorization' => self::BEARER . $this->token,
+            'Content-type' => 'application/json'
+        ];
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('POST', $uri, $header, []);
+            $response = $request->send('POST', $uri, $header, $parameters);
         } catch (RequestException $e) {
             throw new CouldNotCreateACampaign($e->getMessage(), $e->getCode());
         }
@@ -58,16 +61,17 @@ class CampaignRequest extends LinkedInRequest
      */
     public function delete(int $campaignId): void
     {
-        $parameters = json_encode([
+        $parameters = [
             'patch' => [
                 '$set' => [
-                    'status' => 'ARCHIVED',]
+                    'status' => 'ARCHIVED',
+                ]
             ]
-        ]);
-        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGN'].'/'.$campaignId, $parameters);
+        ];
+        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGNS'].'/'.$campaignId, []);
         $header = ['Authorization' => self::BEARER. $this->token];
         try {
-            (new LinkedInRequest())->send('POST', $uri, $header, []);
+            (new LinkedInRequest())->send('POST', $uri, $header, $parameters);
         } catch (RequestException $e) {
             throw new CouldNotDeleteACampaign($e->getMessage(), $e->getCode());
         }
@@ -78,16 +82,15 @@ class CampaignRequest extends LinkedInRequest
      */
     public function update(int $campaignId, array $params): void
     {
-        $params['external_id'] = $campaignId;
-        $parameters = json_encode([
+        $parameters = [
             'patch' => [
                 '$set' => $params,
             ],
-        ]);
-        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGN'].'/'.$campaignId, $parameters);
+        ];
+        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGNS'].'/'.$campaignId, []);
         $header = ['Authorization' => 'Bearer ' . $this->token];
         try {
-            (new LinkedInRequest())->send('POST', $uri, $header, []);
+            (new LinkedInRequest())->send('POST', $uri, $header, $parameters);
         } catch (RequestException $e) {
             throw new CouldNotUpdateACampaign($e->getMessage(), $e->getCode());
         }

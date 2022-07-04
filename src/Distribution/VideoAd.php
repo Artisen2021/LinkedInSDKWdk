@@ -12,4 +12,8 @@ class VideoAd extends Ad
     {
         $this->externalId = $externalId;
     }
+    public function getExternalId(): int
+    {
+        return $this->externalId;
+    }
 }

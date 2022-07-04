@@ -22,20 +22,20 @@ class AdRequest extends LinkedInRequest
     protected const MEDIA_TYPE_IMAGE = 'image';
     protected const MEDIA_TYPE_VIDEO = 'video';
 
-    public function __construct()
+    public function __construct(Client $client, string $token)
     {
-        $this->client = $this->getSetUpClient();
-        $this->token = $this->getSetUpToken();
+        $this->client = $client;
+        $this->token = $token;
     }
 
     public function create(array $parameters)
     {
         if ($parameters['media_type'] === self::MEDIA_TYPE_IMAGE) {
-            return (new ImageAdRequest())->create($parameters);
+            return (new ImageAdRequest($this->client,$this->token))->create($parameters);
         }
 
         if ($parameters['media_type'] === self::MEDIA_TYPE_VIDEO) {
-            return (new VideoAdRequest())->create($parameters);
+            return (new VideoAdRequest($this->client,$this->token))->create($parameters);
         }
         throw new CouldNotCreateAnAd('LinkedIn : Failed to create an ad');
     }
@@ -45,10 +45,17 @@ class AdRequest extends LinkedInRequest
      */
     public function delete(int $adId): void
     {
+        $parameters = [
+            'patch' => [
+                '$set' => [
+                    'status' => 'PENDING_DELETION',
+                ]
+            ]
+        ];
         $uri = $this->client->buildUrl(UrlEnums::URL['AD_CREATIVES']. '/' . $adId,[]);
         $header = ['Authorization' => 'Bearer ' . $this->token];
         try {
-            (new LinkedInRequest())->send('DELETE', $uri, $header, []);
+            (new LinkedInRequest())->send('POST', $uri, $header, $parameters);
         } catch (RequestException $e) {
             throw new CouldNotDeleteAnAd($e->getMessage(), $e->getCode(), ['ad_id' => $adId]);
         }
@@ -61,8 +68,8 @@ class AdRequest extends LinkedInRequest
     {
         $this->delete($adId);
 
-        $parameters['campaign_id'] = $parameters['external_campaign_id'];
-        $parameters['account_id'] = $parameters['external_account_id'];
+//        $parameters['campaign_id'] = $parameters['external_campaign_id'];
+//        $parameters['account_id'] = $parameters['external_account_id'];
         return $this->create($parameters);
     }
 

@@ -22,10 +22,10 @@ class CampaignGroupRequest extends LinkedInRequest
     public Client $client;
     public string $token;
 
-    public function __construct()
+    public function __construct(Client $client, string $token)
     {
-        $this->client = $this->getSetUpClient();
-        $this->token = $this->getSetUpToken();
+        $this->client = $client;
+        $this->token = $token;
     }
 
     /**
@@ -33,13 +33,16 @@ class CampaignGroupRequest extends LinkedInRequest
      */
     public function create(array $parameters)
     {
-        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGN_GROUPS'], $parameters);
+        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGN_GROUPS'], []);
 
-        $header = ['Authorization' => self::BEARER . $this->accessToken->token];
+        $header = [
+            'Authorization' => self::BEARER . $this->token,
+            'Content-type' => 'application/json'
+        ];
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('POST', $uri, $header, []);
+            $response = $request->send('POST', $uri, $header, $parameters);
         } catch (RequestException $e) {
             throw new CouldNotCreateACampaignGroup($e->getMessage(), $e->getCode());
         }
@@ -60,16 +63,17 @@ class CampaignGroupRequest extends LinkedInRequest
      */
     public function delete(int $campaignGroupId): void
     {
-        $parameters = json_encode([
+        $parameters = [
             'patch' => [
                 '$set' => [
-                    'status' => 'ARCHIVED',]
+                    'status' => 'ARCHIVED',
+                ]
             ]
-        ]);
-        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGN_GROUPS'].'/'.$campaignGroupId, $parameters);
+        ];
+        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGN_GROUPS'].'/'.$campaignGroupId, []);
         $header = ['Authorization' => self::BEARER . $this->token];
         try {
-            (new LinkedInRequest())->send('POST', $uri, $header, []);
+            (new LinkedInRequest())->send('POST', $uri, $header, $parameters);
         } catch (RequestException $e) {
             throw new CouldNotDeleteACampaignGroup($e->getMessage(), $e->getCode());
         }
@@ -80,16 +84,19 @@ class CampaignGroupRequest extends LinkedInRequest
      */
     public function update(int $campaignGroupId, array $params): void
     {
-        $params['external_id'] = $campaignGroupId;
-        $parameters = json_encode([
+        //$params['external_id'] = $campaignGroupId;
+        $parameters = [
             'patch' => [
                 '$set' => $params,
             ],
-        ]);
-        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGN_GROUPS'].'/'.$campaignGroupId, $parameters);
-        $header = ['Authorization' => 'Bearer ' . $this->token];
+        ];
+        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CAMPAIGN_GROUPS'].'/'.$campaignGroupId, []);
+        $header = [
+            'Authorization' => 'Bearer ' . $this->token,
+            'Content-type' => 'application/json'
+        ];
         try {
-            (new LinkedInRequest())->send('POST', $uri, $header, []);
+            (new LinkedInRequest())->send('POST', $uri, $header, $parameters);
         } catch (RequestException $e) {
             throw new CouldNotUpdateACampaignGroup($e->getMessage(), $e->getCode());
         }

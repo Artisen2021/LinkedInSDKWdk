@@ -17,7 +17,7 @@ class AdRequestBodyBuilder
             'content' => [
                 'contentEntities' => [
                     [
-                        'landingPageTitle' => strtoupper(str_replace(' ', '_', $params['call_to_action'])),
+                        //'landingPageTitle' => strtoupper(str_replace(' ', '_', $params['call_to_action'])),
                         'landingPageUrl' => $params['landing_page_url'],
                         'description' => $params['text'],
                         'title' => $params['title'],
@@ -55,6 +55,7 @@ class AdRequestBodyBuilder
         ];
     }
 
+    //https://docs.microsoft.com/en-us/linkedin/marketing/integrations/community-management/shares/vector-asset-api?view=li-lms-unversioned&tabs=http
     public function requestCredentialsForVideoUpload(string $pageId): array
     {
         return [

@@ -41,7 +41,7 @@ class AccessTokenRequest
                 throw new CouldNotGetAccessToken($e->getMessage(), $e->getCode());
             }
             $this->accessToken = new AccessToken();
-            $this->requestBody = $this->setAccessToken(AccessToken::fromResponse($response));
+            $this->requestBody = $this->setAccessToken($this->accessToken->fromResponse($response));
             $this->accessToken->setToken($this->requestBody->accessToken->token);
             $this->accessToken->setExpiresIn($this->requestBody->accessToken->expiresIn);
         }

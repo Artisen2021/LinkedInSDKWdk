@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 class OAuthCodeRequest
 {
     protected Client $client;
-    public const SCOPE = [Scope::READ_LITE_PROFILE, Scope::READ_EMAIL_ADDRESS];
+    public const SCOPE = [Scope::READ_LITE_PROFILE, Scope::SHARE_AS_USER];
 
     public function __construct(Client $client)
     {

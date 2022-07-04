@@ -28,10 +28,12 @@ class VideoAdRequest extends LinkedInRequest
     public VideoUploaderRequest $videoUploaderRequest;
     public AdRequestBodyBuilder $builder;
 
-    public function __construct()
+    public function __construct(Client $client, string $token)
     {
-        $this->client = $this->getSetUpClient();
-        $this->token = $this->getSetUpToken();
+        $this->client = $client;
+        $this->token = $token;
+        $this->videoUploaderRequest = new VideoUploaderRequest($this->client,$this->token);
+        $this->builder = new AdRequestBodyBuilder();
     }
 
     /**
@@ -46,18 +48,18 @@ class VideoAdRequest extends LinkedInRequest
 
         $directShareId = $this->createDirectSponsoredContent($parameters, $darkShare['id']);
 
-        $requestBody = json_encode($this->builder->createVideoAdRequest([
+        $requestBody = $this->builder->createVideoAdRequest([
             'campaign_id' => $parameters['campaign_id'],
             'direct_share_reference' => $directShareId,
-        ]));
+        ]);
 
-        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CREATIVES'], $requestBody);
+        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CREATIVES'], []);
 
         $header = ['Authorization' => self::BEARER . $this->token];
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('POST', $uri, $header, []);
+            $response = $request->send('POST', $uri, $header, $requestBody);
         } catch (RequestException $e) {
             throw new CouldNotCreateAVideoAd($e->getMessage(), $e->getCode());
         }
@@ -74,7 +76,7 @@ class VideoAdRequest extends LinkedInRequest
 
     private function createDarkShare(array $params, string $mediaAsset): array
     {
-        $requestBody = json_encode($this->builder->createDarkShareForVideoAd([
+        $requestBody = $this->builder->createDarkShareForVideoAd([
             'page_id' => $params['linkedin_page_id'],
             'type' => $params['media_type'],
             'text' => $params['message'],
@@ -82,15 +84,15 @@ class VideoAdRequest extends LinkedInRequest
             'landing_page_url' => $params['landing_page_url'],
             'media' => $mediaAsset,
             'call_to_action' => $params['call_to_action'],
-        ]));
+        ]);
 
-        $uri = $this->client->buildUrl(UrlEnums::URL['UGC_POST'], $requestBody);
+        $uri = rtrim($this->client->buildUrl(UrlEnums::URL['UGC_POST'],[]), '?');
 
         $header = ['Authorization' => self::BEARER . $this->token];
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('POST', $uri, $header, []);
+            $response = $request->send('POST', $uri, $header, $requestBody);
         } catch (RequestException $e) {
             throw new CouldNotCreateAnImageAd('LinkedIn : Failed to create a DarkShare for a video ad', $e, $params);
         }
@@ -99,20 +101,20 @@ class VideoAdRequest extends LinkedInRequest
 
     private function createDirectSponsoredContent(array $params, $ugcPostId): string
     {
-        $requestBody = json_encode($this->builder->createAdDirectSponsoredContent([
+        $requestBody = $this->builder->createAdDirectSponsoredContent([
             'account_id' => $params['account_id'],
             'page_id' => $params['linkedin_page_id'],
             'post_reference' => $ugcPostId,
             'title' => $params['headline'],
-        ]));
+        ]);
 
-        $uri = $this->client->buildUrl(UrlEnums::URL['DIRECT_SPONSORED_POST'], $requestBody);
+        $uri = $this->client->buildUrl(UrlEnums::URL['DIRECT_SPONSORED_POST'], []);
 
         $header = ['Authorization' => 'Bearer ' . $this->token];
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('POST', $uri, $header, []);
+            $response = $request->send('POST', $uri, $header, $requestBody);
         } catch (RequestException $e) {
             //TODO: $e is cast to int somewhere?
             throw new CouldNotCreateAnImageAd('LinkedIn : Failed to create a direct sponsored content for a video ad', $e, $params);

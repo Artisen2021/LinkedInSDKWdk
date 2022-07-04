@@ -18,15 +18,15 @@ class SocialPageRequest extends LinkedInRequest
 {
     use TraitOAuthIsSetUp;
 
-    private const BEARER = 'Bearer: ';
+    private const BEARER = 'Bearer ';
     public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
     public Client $client;
     public string $token;
 
-    public function __construct()
+    public function __construct(Client $client, string $token)
     {
-        $this->client = $this->getSetUpClient();
-        $this->token = $this->getSetUpToken();
+        $this->client = $client;
+        $this->token = $token;
     }
 
     /**
@@ -34,7 +34,7 @@ class SocialPageRequest extends LinkedInRequest
      */
     public function getPendingClientPages(LinkedInRequestPendingPagesEvent $event): ?array
     {
-        $uri = $this->client->buildUrl(UrlEnums::URL['PENDING_CLIENT_PAGES'], []);
+        $uri = rtrim($this->client->buildUrl(UrlEnums::URL['PENDING_CLIENT_PAGES'], []), '?');
 
         $header = ['Authorization' => self::BEARER . $this->token];
 
@@ -64,11 +64,13 @@ class SocialPageRequest extends LinkedInRequest
             $event->getPageId(),
             implode(',', $queryFields)
         );
+        $uri = rtrim($this->client->buildUrl($url, []), '?');
+
         $header = ['Authorization' => self::BEARER . $this->token];
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('GET', $url, $header, []);
+            $response = $request->send('GET', $uri, $header, []);
         } catch (PermissionCouldNotBeCreated $e) {
             throw new CouldNotGetPageDataEvent($e->getMessage(), $e->getCode());
         }
@@ -90,11 +92,13 @@ class SocialPageRequest extends LinkedInRequest
             'organizationAcls?q=organization&organization=%s&role=ADMINISTRATOR&state=APPROVED',
             $organizationUrn
         );
+        $uri = rtrim($this->client->buildUrl($url, []), '?');
+
         $header = ['Authorization' => self::BEARER . $this->token];
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('GET', $url, $header, []);
+            $response = $request->send('GET', $uri, $header, []);
         } catch (PermissionCouldNotBeCreated $e) {
             throw new CouldNotGetPageDataEvent($e->getMessage(), $e->getCode());
         }
@@ -113,11 +117,13 @@ class SocialPageRequest extends LinkedInRequest
     {
         $organisationUrn = sprintf('urn:li:organization:%s', $event->getPageId());
         $url = sprintf('adAccountsV2?q=search&search.reference.values[0]=%s', $organisationUrn);
+        $uri = rtrim($this->client->buildUrl($url, []), '?');
+
         $header = ['Authorization' => self::BEARER . $this->token];
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('GET', $url, $header, []);
+            $response = $request->send('GET', $uri, $header, []);
         } catch (PermissionCouldNotBeCreated $e) {
             throw new CouldNotGetPageDataEvent($e->getMessage(), $e->getCode());
         }

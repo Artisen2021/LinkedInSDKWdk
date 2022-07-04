@@ -5,7 +5,7 @@ namespace Artisen2021\LinkedInSDK;
 class UrlEnums
 {
     const URL = [
-        'AD_CAMPAIGN_GROUPS' => 'adCampaignsV2',
+        'AD_CAMPAIGN_GROUPS' => 'adCampaignGroupsV2',
         'AD_CAMPAIGNS' => 'adCampaignsV2',
         'AD_TARGETING_ENTITIES' => 'adTargetingEntities',
         'AD_CREATIVES' => 'adCreativesV2',

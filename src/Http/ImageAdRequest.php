@@ -19,12 +19,13 @@ class ImageAdRequest extends LinkedInRequest
     public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
     public Client $client;
     public string $token;
-    public AdRequestBodyBuilder $builder;
+    private AdRequestBodyBuilder $builder;
 
-    public function __construct()
+    public function __construct(Client $client, string $token)
     {
-        $this->client = $this->getSetUpClient();
-        $this->token = $this->getSetUpToken();
+        $this->client = $client;
+        $this->token = $token;
+        $this->builder = new AdRequestBodyBuilder();
     }
 
     public function create(array $parameters)
@@ -37,13 +38,16 @@ class ImageAdRequest extends LinkedInRequest
             'share_reference' => $darkShare['id'],
         ]);
 
-        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CREATIVES'], $requestBody);
+        $uri = $this->client->buildUrl(UrlEnums::URL['AD_CREATIVES'], []);
 
-        $header = ['Authorization' => self::BEARER . $this->token];
+        $header = [
+            'Authorization' => 'Bearer ' . $this->token,
+            'Content-type' => 'application/json'
+        ];
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('POST', $uri, $header, []);
+            $response = $request->send('POST', $uri, $header, $requestBody);
         } catch (RequestException $e) {
             throw new CouldNotCreateAnImageAd($e->getMessage(), $e->getCode());
         }
@@ -60,7 +64,7 @@ class ImageAdRequest extends LinkedInRequest
 
     private function createDarkShare(array $params): array
     {
-        $requestBody = json_encode($this->builder->createDarkShareForImageAd([
+        $requestBody = $this->builder->createDarkShareForImageAd([
             'account_id' => $params['account_id'],
             'page_id' => $params['linkedin_page_id'],
             'campaign_id' => $params['campaign_id'],
@@ -69,20 +73,22 @@ class ImageAdRequest extends LinkedInRequest
             'title' => $params['headline'],
             'landing_page_url' => $params['landing_page_url'],
             'media_url' => $params['media_url'],
-            'call_to_action' => $params['call_to_action'],
-        ]));
+            //'call_to_action' => $params['call_to_action'],
+        ]);
 
-        $uri = $this->client->buildUrl(UrlEnums::URL['SHARES'], $requestBody);
+        $uri = $this->client->buildUrl(UrlEnums::URL['SHARES'], []);
 
-        $header = ['Authorization' => 'Bearer ' . $this->token];
+        $header = [
+            'Authorization' => 'Bearer ' . $this->token,
+            'Content-type' => 'application/json'
+        ];
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('POST', $uri, $header, []);
+            $response = $request->send('POST', $uri, $header, $requestBody);
         } catch (RequestException $e) {
             throw new CouldNotCreateAnImageAd($e->getMessage(), $e->getCode());
         }
-
         return json_decode($response->getBody()->getContents(), true);
     }
 }

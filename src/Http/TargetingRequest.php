@@ -15,16 +15,16 @@ class TargetingRequest extends LinkedInRequest
 {
     use TraitOAuthIsSetUp;
 
-    private const BEARER = 'Bearer: ';
+    private const BEARER = 'Bearer ';
     //What's this const supposed to do?
     public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
     public Client $client;
     public string $token;
 
-    public function __construct()
+    public function __construct(Client $client, string $token)
     {
-        $this->client = $this->getSetUpClient();
-        $this->token = $this->getSetUpToken();
+        $this->client = $client;
+        $this->token = $token;
     }
 
     //https://docs.microsoft.com/en-us/linkedin/marketing/integrations/ads/advertising-targeting/ads-targeting?view=li-lms-2022-06&tabs=http#ad-targeting-entities
@@ -39,13 +39,13 @@ class TargetingRequest extends LinkedInRequest
             '&facet=urn:li:adTargetingFacet:locations' .
             '&query=' . $locationName;
 
-        $uri = $this->client->buildUrl(UrlEnums::URL['AD_TARGETING_ENTITIES']. '?' . $queryString, []);
+        $uri = rtrim($this->client->buildUrl(UrlEnums::URL['AD_TARGETING_ENTITIES']. '?' . $queryString, []),'?');
 
         $header = ['Authorization' => self::BEARER . $this->token];
 
         try {
             $request = new LinkedInRequest();
-            $response = $request->send('GET', $uri, $header, []);
+            $response = $request->send('GET', $uri, $header,[]);
             $body = json_decode($response->getBody()->getContents(), true);
         } catch (RequestException $e) {
             throw new CouldNotFetchLocation($e->getMessage(), $e->getCode());

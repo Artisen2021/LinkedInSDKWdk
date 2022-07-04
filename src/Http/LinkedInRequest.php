@@ -14,40 +14,16 @@ use Psr\Http\Message\ResponseInterface;
 
 class LinkedInRequest
 {
-    protected array $bodyParams = [];
-    protected array $requestHeaders = [];
-    protected array $responseHeaders = [];
-    protected int $responseHttpStatusCode;
-
-    //TODO: Commented out code?
-//    public Client $client;
-//    public AccessToken $accessToken;
-//    public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
-//
-//    public function __construct(
-//        Client $client,
-//        AccessToken $accessToken)
-//    {
-//        $this->client = $client;
-//        $this->accessToken = $accessToken;
-//    }
-
     /**
      * @throws Exception
      */
-    public function send($method, $endpoint, $headers=[], $parameters=[]): ResponseInterface
+    public function send($method, $endpoint, $headers, $parameters): ResponseInterface
     {
-        if ($parameters) {
-            $this->bodyParams = ['form_params' => $parameters];
-        }
+        $requestBody = empty($parameters)
+            ? json_encode($parameters, JSON_FORCE_OBJECT)
+            : json_encode($parameters);
 
-        if ($headers) {
-            foreach ($headers as $k => $v) {
-                $this->requestHeaders = [$k => $v];
-            }
-        }
-
-        $request = new Request($method, $endpoint, $this->requestHeaders, json_encode($this->bodyParams));
+        $request = new Request($method, $endpoint, $headers, $requestBody);
         try {
             $response = (new GuzzleClient())->send($request);
         } catch (GuzzleException $e) {
@@ -57,6 +33,7 @@ class LinkedInRequest
 
         $this->responseHttpStatusCode = $response->getStatusCode();
         $this->responseHeaders = $response->getHeaders();
+
 
         return $response;
     }
