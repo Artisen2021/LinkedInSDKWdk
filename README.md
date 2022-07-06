@@ -45,7 +45,7 @@ $this->linkedInClient->setRedirectUrl('https://your.domain/callback');
 In order to perform OAUTH 2.0 flow, you must direct the member's browser to LinkedIn's OAuth 2.0 authorization page where the member connects to LinkedIn, then either accepts or denies your application's permission request. 
 To get redirect url to LinkedIn, use the following approach:
 ```php
-$loginUrl = $client->getLoginUrl($scopes); // get url on LinkedIn to start linking
+$loginUrl = $client->getLoginUrl($scopes); 
 ```
 Once the user is connected and has completed the authorization process, the browser is redirected to the URL provided in the redirect_uri query parameter and the Authorization Code appears in the URL.
 This code is a value that you exchange with LinkedIn for an OAuth 2.0 access token.
@@ -54,11 +54,12 @@ This code is a value that you exchange with LinkedIn for an OAuth 2.0 access tok
 
 To get access token:
 ```php
-$this->token = (new AccessTokenRequest($this->linkedInClient))->getAccessToken($code);
+$this->token = (new AccessTokenRequest($this->linkedInClient))->getAccessToken($code)->getToken();
 ```
-Store this AccessToken.
-
-# A COMPLETER
+In the AccessTokenRequest class, this token is stored in a file token.json:
+```php
+file_put_contents('token.json', json_encode($this->accessToken));
+```
 
 This AccessToken is used the header of the API calls.
 ```php
