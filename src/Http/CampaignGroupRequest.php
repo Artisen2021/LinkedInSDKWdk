@@ -15,6 +15,8 @@ use Artisen2021\LinkedInSDK\Builder\CampaignGroupBuilder;
 
 class CampaignGroupRequest extends LinkedInRequest
 {
+    use TraitToken;
+
     //TODO: may be good to make request headers enums?
     private const BEARER = 'Bearer ';
     public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
@@ -22,10 +24,10 @@ class CampaignGroupRequest extends LinkedInRequest
     public string $token;
     private CampaignGroupBuilder $builder;
 
-    public function __construct(Client $client, string $token)
+    public function __construct(Client $client)
     {
         $this->client = $client;
-        $this->token = $token;
+        $this->token = $this->getTokenCode();
         $this->builder = new CampaignGroupBuilder();
     }
 

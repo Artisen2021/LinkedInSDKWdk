@@ -19,6 +19,8 @@ use GuzzleHttp\Exception\RequestException;
 
 class VideoAdRequest extends LinkedInRequest
 {
+    use TraitToken;
+
     private const BEARER = 'Bearer ';
     public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
     public Client $client;
@@ -26,11 +28,11 @@ class VideoAdRequest extends LinkedInRequest
     public VideoUploaderRequest $videoUploaderRequest;
     public AdBuilder $builder;
 
-    public function __construct(Client $client, string $token)
+    public function __construct(Client $client)
     {
         $this->client = $client;
-        $this->token = $token;
-        $this->videoUploaderRequest = new VideoUploaderRequest($this->client,$this->token);
+        $this->token = $this->getTokenCode();
+        $this->videoUploaderRequest = new VideoUploaderRequest($this->client);
         $this->builder = new AdBuilder();
     }
 

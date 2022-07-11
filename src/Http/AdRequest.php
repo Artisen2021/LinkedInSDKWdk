@@ -16,16 +16,18 @@ use Artisen2021\LinkedInSDK\Builder\AdBuilder;
 
 class AdRequest extends LinkedInRequest
 {
+    use TraitToken;
+
     public Client $client;
     public string $token;
     protected const MEDIA_TYPE_IMAGE = 'image';
     protected const MEDIA_TYPE_VIDEO = 'video';
     public AdBuilder $builder;
 
-    public function __construct(Client $client, string $token)
+    public function __construct(Client $client)
     {
         $this->client = $client;
-        $this->token = $token;
+        $this->token = $this->getTokenCode();
         $this->builder = new AdBuilder();
     }
 

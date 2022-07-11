@@ -63,9 +63,19 @@ class Campaign
         return $this->start;
     }
 
+    public function setStart($start): void
+    {
+        $this->start = $start;
+    }
+
     public function getEnd(): int
     {
         return $this->end;
+    }
+
+    public function setEnd($end): void
+    {
+        $this->end = $end;
     }
 
     public function getTotalBudget(): string
@@ -73,9 +83,19 @@ class Campaign
         return $this->total_budget;
     }
 
+    public function setTotalBudget($total_budget): void
+    {
+        $this->total_budget = $total_budget;
+    }
+
     public function getDailyBudget(): string
     {
         return $this->daily_budget;
+    }
+
+    public function setDailyBudget($daily_budget): void
+    {
+        $this->daily_budget = $daily_budget;
     }
 
     public function getCurrency(): string
@@ -83,9 +103,19 @@ class Campaign
         return $this->currency;
     }
 
+    public function setCurrency($currency): void
+    {
+        $this->currency = $currency;
+    }
+
     public function getCountry(): string
     {
         return $this->country;
+    }
+
+    public function setCountry($country): void
+    {
+        $this->country = $country;
     }
 
     public function getLocations(): string
@@ -93,9 +123,19 @@ class Campaign
         return $this->locations;
     }
 
+    public function setLocations($locations): void
+    {
+        $this->locations = $locations;
+    }
+
     public function getLanguage(): string
     {
         return $this->language;
+    }
+
+    public function setLanguage($language): void
+    {
+        $this->language = $language;
     }
 
     public function getObjective(): string
@@ -103,9 +143,19 @@ class Campaign
         return $this->objective;
     }
 
+    public function setObjective($objective): void
+    {
+        $this->objective = $objective;
+    }
+
     public function getCampaignAdType(): string
     {
         return $this->campaign_ad_type;
+    }
+
+    public function setCampaignAdType($campaign_ad_type): void
+    {
+        $this->campaign_ad_type = $campaign_ad_type;
     }
 
     public function getSkills(): string
@@ -113,8 +163,18 @@ class Campaign
         return $this->skills;
     }
 
+    public function setSkills($skills): void
+    {
+        $this->skills = $skills;
+    }
+
     public function getProfiles(): string
     {
         return $this->profiles;
+    }
+
+    public function setProfiles($profiles): void
+    {
+        $this->profiles = $profiles;
     }
 }

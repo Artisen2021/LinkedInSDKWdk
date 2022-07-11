@@ -44,6 +44,7 @@ class AccessTokenRequest
             $this->requestBody = $this->setAccessToken($this->accessToken->fromResponse($response));
             $this->accessToken->setToken($this->requestBody->accessToken->token);
             $this->accessToken->setExpiresIn($this->requestBody->accessToken->expiresIn);
+            file_put_contents('token.json', json_encode($this->accessToken));
         }
         return $this->accessToken;
     }

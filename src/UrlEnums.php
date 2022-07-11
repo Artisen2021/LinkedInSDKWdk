@@ -14,5 +14,6 @@ class UrlEnums
         'UGC_POST' => 'ugcPosts',
         'DIRECT_SPONSORED_POST' => 'adDirectSponsoredContents',
         'PENDING_CLIENT_PAGES' => 'organizationAcls?q=roleAssignee&state=REQUESTED&count=5000',
+        'AD_ANALYTICS' => 'adAnalyticsV2',
     ];
 }

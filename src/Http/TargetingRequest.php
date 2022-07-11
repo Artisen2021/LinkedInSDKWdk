@@ -13,16 +13,18 @@ use GuzzleHttp\Exception\RequestException;
 
 class TargetingRequest extends LinkedInRequest
 {
+    use TraitToken;
+
     private const BEARER = 'Bearer ';
     //What's this const supposed to do?
     public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
     public Client $client;
     public string $token;
 
-    public function __construct(Client $client, string $token)
+    public function __construct(Client $client)
     {
         $this->client = $client;
-        $this->token = $token;
+        $this->token = $this->getTokenCode();
     }
 
     //https://docs.microsoft.com/en-us/linkedin/marketing/integrations/ads/advertising-targeting/ads-targeting?view=li-lms-2022-06&tabs=http#ad-targeting-entities
