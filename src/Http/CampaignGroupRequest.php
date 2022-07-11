@@ -17,7 +17,6 @@ class CampaignGroupRequest extends LinkedInRequest
 {
     use TraitToken;
 
-    //TODO: may be good to make request headers enums?
     private const BEARER = 'Bearer ';
     public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
     public Client $client;

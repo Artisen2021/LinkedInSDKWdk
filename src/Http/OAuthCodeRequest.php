@@ -44,6 +44,6 @@ class OAuthCodeRequest
 
         parse_str($url_components['query'], $params);
 
-        return $oauthCode = $params['code'];
+        return $params['code'];
     }
 }

@@ -3,15 +3,15 @@
 namespace Artisen2021\LinkedInSDK\Http;
 
 use Artisen2021\LinkedInSDK\Authentication\Client;
+use Artisen2021\LinkedInSDK\Exception\CouldNotCreateAnalytics;
 use Artisen2021\LinkedInSDK\UrlEnums;
+use GuzzleHttp\Exception\RequestException;
 
 class AnalyticsRequest extends LinkedInRequest
 {
     use TraitToken;
 
-    //TODO: may be good to make request headers enums?
     private const BEARER = 'Bearer ';
-    public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
     public Client $client;
     public string $token;
     public const CAMPAIGN_METRIC_FIELDS = [

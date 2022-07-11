@@ -19,7 +19,6 @@ class SocialPageRequest extends LinkedInRequest
     use TraitToken;
 
     private const BEARER = 'Bearer ';
-    public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
     public Client $client;
     public string $token;
 

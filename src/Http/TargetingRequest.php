@@ -16,8 +16,6 @@ class TargetingRequest extends LinkedInRequest
     use TraitToken;
 
     private const BEARER = 'Bearer ';
-    //What's this const supposed to do?
-    public const HEADER_RESOURCE_ID = 'X-LinkedIn-Id';
     public Client $client;
     public string $token;
 
